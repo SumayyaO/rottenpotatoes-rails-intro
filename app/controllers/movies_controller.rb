@@ -13,10 +13,10 @@ class MoviesController < ApplicationController
   def index
     sort_choice= params[:sort]
     if sort_choice == "title"
-      @movies = Movie.find(sort_choice).order(:created_at)
+      @movie = Movie.find(sort_choice).order(:created_at)
     end  
     if sort_choice == "release_date"
-      @movies = Movie.all
+    #  @movies = Movie.all
     end
   end
 
