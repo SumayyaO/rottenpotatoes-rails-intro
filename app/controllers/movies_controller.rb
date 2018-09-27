@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @movies = Movie.all
     sort_choice= params[:sort]
     case sort_choice
     when 'title'
