@@ -11,16 +11,29 @@ class MoviesController < ApplicationController
   end
 
   def index
+   @all_ratings = Movie.all_ratings
+   #@selected_ratings = params[:ratings]
+   sort_choice= params[:sort]
+
+   #@movies = Movie.where(:rating => @selected_ratings.keys)
     @movies = Movie.all
-    sort_choice= params[:sort]
     case sort_choice
-    when 'title_header'
-      @movies = Movie.order(:title)
-    when 'release_date_header'
-      @movies = Movie.order(:release_date)
+      when 'title'
+        #@selected_ratings = params[:ratings]
+        @movies = Movie.order(sort_choice)
+        @title_header='hilite'
+       
+      when 'release_date'
+        #if @selected_ratings == nil
+        @movies = Movie.order(sort_choice)
+        @release_date_header='hilite'
+        #else
+       #@movies = Movie.where(:rating => @selected_ratings.keys).order(sort_choice)
+        #end
     end
-    
+  
   end
+
 
   def new
     # default: render 'new' template
