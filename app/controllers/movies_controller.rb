@@ -11,34 +11,43 @@ class MoviesController < ApplicationController
   end
 
   def index
-   @all_ratings = Movie.all_ratings
-   @selected_ratings = params[:ratings]
-   
-    if(@selected_ratings)
-    @movies = Movie.where(:rating => @selected_ratings.keys)
-    else
-    sort_choice= params[:sort]
-      case sort_choice
+    
+    sort_choice= params[:sort] || session[:sort]
+    case sort_choice
       when 'title'
         @movies = Movie.order(sort_choice)
-        if !(@selected_ratings.nil?)
-        @movies = Movie.where(:rating => @selected_ratings.keys).order(sort_choice)
-        end
         @title_header='hilite'
       when 'release_date'
-        #if @selected_ratings == nil
         @movies = Movie.order(sort_choice)
-        @release_date_header='hilite'
-        #else
-        #@movies = Movie.where(:rating => @selected_ratings.keys).order(sort_choice)
-        #end
-      else  
-        @movies=Movie.all
-        @selected_ratings=@all_ratings
-      end
+        @release_date_header='hilite' 
+      else
+      @movies=Movie.all 
+      @selected_ratings=@all_ratings
     end
+      
+   @all_ratings = Movie.all_ratings
+   @selected_ratings = params[:ratings] || session[:ratings] || nil
+   
+  if @selected_ratings == nil
+    @selected_ratings= Hash[all_ratings.map {|x| [x , x] }]
   end
-
+  
+  if params[:ratings] != session[:ratings] || params[:sort] != session[:sort]
+    session[:sort]=sort_choice
+    session[:ratings] = @selected_ratings
+    flash.keep
+    redirect_to movies_path(:sort => sort_choice, :ratings => @selected_ratings) and return
+  end
+  
+ # if !(params[:ratings].nil?)
+ # @selected_ratings = params[:ratings]
+ # session[:ratings] = @selected_ratings
+ # @movies = Movie.where(:rating => @selected_ratings.keys)
+ # end
+  
+    @movies = Movie.where(:rating => @selected_ratings.keys).order(sort_choice)
+  end  
+ 
 
   def new
     # default: render 'new' template
